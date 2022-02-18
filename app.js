@@ -19,18 +19,29 @@ const insertUsersDataInDOM = userData => {
 const getUsersData = async () => {
   try {
     const response = await fetch(url);
-    const data = await response.json();
+    
+    if (response.status === 404) {
+      throw new Error('Error 404')
+    }
 
-    return data;
+    if (!response.ok) {
+      throw new Error('Não foi possivel obter os dados')
+    }
+    
+    const data = await response.json();
+    
+    return data;    
   } catch (error) {
-    console.log(error)
+    document.body.innerText = error.message;
+    document.body.style.color = 'red'
+    document.body.style.fontSize = '25px'
   }
 }
 
 const showUsersData = async () => {
   const data = await getUsersData();
 
-  data.forEach(({ id, name, username, email, phone }) => 
+  data.forEach(({ id, name, username, email, phone }) =>
     insertUsersDataInDOM([id, name, username, email, phone]))
 }
 
